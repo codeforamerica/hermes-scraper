@@ -66,10 +66,12 @@ def save_cases(cases):
     for number in cases:
 
         # Save new case in DB if it doesn't exist already
-        c = session.query(Case).filter(Case.number == number).one()
-        if not c:
+        cs = session.query(Case).filter(Case.number == number).all()
+        if len(cs) == 0:
             c = Case(number, cases[number]['title'])
             session.add(c)
+        else:
+            c = cs[0]
 
         # Unflag previously-flagged latest events for the case
         for latest_event in session.query(CaseEventHistorical) \
@@ -91,13 +93,14 @@ def save_cases(cases):
 # Main
 driver = webdriver.Firefox()
 
-cases = {}
+totalNumCases = 0
 for lastname_prefix in generate_lastname_prefixes():
     submit_search_form(driver, lastname_prefix)
+    cases = {}
     parse_cases_from_results_page(driver, cases)
-    print "Harvested " + str(len(cases)) + " cases so far."
+    totalNumCases += len(cases)
+    save_cases(cases)
+    print "Harvested " + str(totalNumCases) + " cases so far."
     
-
-save_cases(cases)
 
 driver.close()
