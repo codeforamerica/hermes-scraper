@@ -29,7 +29,11 @@
 
     python bin/db_init.py
 
-9) Install Firefox (required by the scraper to emulate a human user searching for cases)
+9) Install project dependencies
+
+    pip -r requirements.txt
+
+10) Install Firefox (required by the scraper to emulate a human user searching for cases)
 
 ### Running the scraper (IMPORTANT! Please run during off-hours in Kentucky)
 
