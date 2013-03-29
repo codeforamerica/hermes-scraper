@@ -31,7 +31,7 @@
 
 9) Install Firefox (required by the scraper to emulate a human user searching for cases)
 
-### Running the scraper
+### Running the scraper (IMPORTANT! Please run during off-hours in Kentucky)
 
 1) Open a new Terminal window
 
