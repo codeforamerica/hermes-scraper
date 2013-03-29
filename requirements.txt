@@ -1,0 +1,2 @@
+selenium==2.31.0
+sqlalchemy==0.8.0
