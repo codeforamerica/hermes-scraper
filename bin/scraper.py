@@ -37,15 +37,7 @@ def parse_cases_from_results_page(driver, cases):
             parse_cases_from_results_page(driver, cases)
     
 def generate_lastname_prefixes():
-    prefixes = []
-    chars = range(65, 65+26)
-    for i1 in chars:
-        for i2 in chars:
-            for i3 in chars:
-                prefixes.append(chr(i1) + chr(i2) + chr(i3))
-
-    random.shuffle(prefixes)
-    return prefixes
+    return [ prefix.strip() for prefix in open('config/lastname_prefix_search_order.txt') ]
         
 # Submit search form
 def submit_search_form(driver, lastname_prefix):
