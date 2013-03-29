@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, backref
 from common import Base
 
-class CaseEventsHistorical(Base):
+class CaseEventHistorical(Base):
     __tablename__ = 'case_events_historical'
 
     id = Column(Integer, primary_key=True)
