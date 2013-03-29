@@ -2,6 +2,11 @@ from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
 import random
+from models.case import Case
+from models.case_event_historical import CaseEventHistorical
+from db import connection
+from sqlalchemy.sql import exists
+from sqlalchemy.orm import joinedload
 
 def parse_cases_from_results_page(driver, cases):
     for case_row_el in driver.find_elements_by_xpath("//tr[@class='caseItem' or @class='caseAlternateItem']"):
@@ -54,6 +59,35 @@ def submit_search_form(driver, lastname_prefix):
     driver.find_element_by_name("ctl00$ContentPlaceHolder_Content$tab_container_search$tab_party$btn_PS_search").click()
     time.sleep(random.randint(1,4))
 
+def save_cases(cases):
+    print "Saving cases to DB..."
+
+    session = connection.Session()
+    for number in cases:
+
+        # Save new case in DB if it doesn't exist already
+        c = session.query(Case).filter(Case.number == number).one()
+        if not c:
+            c = Case(number, cases[number]['title'])
+            session.add(c)
+
+        # Unflag previously-flagged latest events for the case
+        for latest_event in session.query(CaseEventHistorical) \
+                                   .options(joinedload(CaseEventHistorical.case)) \
+                                   .filter(CaseEventHistorical.latest) \
+                                   .filter(CaseEventHistorical.case == c) \
+                                   .all():
+            latest_event.latest = False
+            session.add(latest_event)
+
+        # Save latest events for the case
+        for event_datetime in cases[number]['events']:
+            event = cases[number]['events'][event_datetime]
+            ce = CaseEventHistorical(c, event_datetime, event['title'], '')
+            session.add(ce)
+
+    session.commit()
+
 # Main
 driver = webdriver.Firefox()
 
@@ -64,5 +98,6 @@ for lastname_prefix in generate_lastname_prefixes():
     print "Harvested " + str(len(cases)) + " cases so far."
     
 
-print cases
+save_cases(cases)
+
 driver.close()

@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import relationship, backref
+from datetime import datetime
 from common import Base
 
 class CaseEventHistorical(Base):
@@ -11,5 +12,14 @@ class CaseEventHistorical(Base):
     title = Column(String)
     location = Column(String)
     inserted_on = Column(DateTime)
+    latest = Column(Boolean)
 
     case = relationship("Case", backref=backref('historical_events', order_by=inserted_on))
+
+    def __init__(self, case, when, title, location):
+        self.case = case
+        self.datetime = when
+        self.title = title
+        self.location = location
+        self.latest = True
+        self.inserted_on = datetime.now()
