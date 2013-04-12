@@ -1,3 +1,5 @@
+<img src='http://www.aresluna.org/cfa/hermes-scraper.jpg'>
+
 ## Development Setup - For Mac OS X 10
 
 ### First-time setup
